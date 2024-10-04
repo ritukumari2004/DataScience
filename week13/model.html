@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 500px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        p {
+            font-size: 16px;
+            color: #555;
+        }
+        .output-box {
+            margin-top: 20px;
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: scroll;
+            white-space: pre-wrap;
+        }
+        .spinner {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>House Price Prediction Tool</h2>
+        <p>Upload your CSV file to preprocess the data and predict house prices.</p>
+
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" accept=".csv" /><br>
+            <button type="button" onclick="processCSV()">Process CSV</button>
+            <button type="button" onclick="resetForm()">Reset</button>
+        </form>
+
+        <div class="spinner" id="spinner">Processing...</div>
+
+        <div id="preview-section" style="display:none;">
+            <h3>CSV Preview:</h3>
+            <div class="output-box">
+                <pre id="output"></pre>
+            </div>
+            <p id="rowCount"></p>
+        </div>
+
+        <div id="prediction-section" style="display:none;">
+            <h3>Predicted Prices:</h3>
+            <div class="output-box">
+                <pre id="predictions"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function processCSV() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please upload a CSV file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            const spinner = document.getElementById('spinner');
+            spinner.style.display = 'block';
+
+            reader.onload = function(event) {
+                try {
+                    const csvContent = event.target.result;
+                    const rows = csvContent.split('\n').map(row => row.split(','));
+
+                    // Show first few rows as a preview
+                    const output = document.getElementById('output');
+                    output.innerHTML = "First few rows of your CSV:\n" + rows.slice(0, 5).map(row => row.join(', ')).join('\n');
+
+                    // Show the total number of rows
+                    const rowCount = document.getElementById('rowCount');
+                    rowCount.innerHTML = `Total rows: ${rows.length}`;
+
+                    // Show the preview section
+                    document.getElementById('preview-section').style.display = 'block';
+
+                    // Simulate model prediction (replace with actual model prediction logic)
+                    const predictions = rows.slice(1).map((row, index) => `House ${index + 1}: $${(Math.random() * 500000 + 100000).toFixed(2)}`);
+                    const predictionsOutput = document.getElementById('predictions');
+                    predictionsOutput.innerHTML = predictions.join('\n');
+
+                    // Show the prediction section
+                    document.getElementById('prediction-section').style.display = 'block';
+                } catch (error) {
+                    alert("Error processing CSV file. Please ensure it is a valid CSV.");
+                } finally {
+                    spinner.style.display = 'none';
+                }
+            };
+
+            reader.readAsText(file);
+        }
+
+        function resetForm() {
+            document.getElementById('uploadForm').reset();
+            document.getElementById('preview-section').style.display = 'none';
+            document.getElementById('prediction-section').style.display = 'none';
+            document.getElementById('output').innerHTML = '';
+            document.getElementById('predictions').innerHTML = '';
+            document.getElementById('rowCount').innerHTML = '';
+        }
+    </script>
+
+</body>
+</html>
